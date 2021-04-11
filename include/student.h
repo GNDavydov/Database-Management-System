@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-namespace studentSpace{
+namespace studentSpace {
     const std::multimap<size_t, std::string> disciplinesAll = {
             {1, "mathematics"},
             {1, "history"},
@@ -20,25 +20,13 @@ namespace studentSpace{
             {2, "integrals"},
             {2, "programming_2"}
     };
-
-    const std::vector<std::string> GetDisciplines(size_t sem){
-        std::vector<std::string> disciplines;
-        disciplines.reserve(disciplinesAll.size());
-        for (auto iter = disciplinesAll.begin(); iter != disciplinesAll.end(); ++iter){
-            if (iter->first <= sem){
-                disciplines.push_back(iter->second);
-            }
-        }
-        disciplines.shrink_to_fit();
-        return disciplines;
-    }
 }
 
-class Student{
+class Student {
 public:
     virtual double Count_average() = 0;
 
-    virtual ~Student();
+    virtual ~Student() {}
 };
 
 #endif //SEM_2_ALG_LANG_HOMEWORK_1_STUDENT_H

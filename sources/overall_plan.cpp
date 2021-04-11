@@ -5,12 +5,8 @@
 OverallPlan::OverallPlan() = default;
 
 OverallPlan::OverallPlan(const std::string &name, const std::string &chair, const size_t sem,
-                         const std::vector<size_t> &marks) : name_(name), chair_(chair), sem_(sem) {
-    std::vector<std::string> disciplines = studentSpace::GetDisciplines(sem_);
-    for (size_t i = 0; i < disciplines.size(); ++i) {
-        subjectsStudied_.insert({disciplines[i], marks[i]});
-    }
-}
+                         const std::vector<semester> &subjectsStudied) : name_(name), chair_(chair), sem_(sem),
+                                                                         subjectsStudied_(subjectsStudied) {}
 
 std::string OverallPlan::GetName() const {
     return name_;
@@ -24,7 +20,7 @@ size_t OverallPlan::GetSemester() const {
     return sem_;
 }
 
-std::map<std::string, size_t> OverallPlan::GetSubjects() const {
+std::vector<semester> OverallPlan::GetSubjects() const {
     return subjectsStudied_;
 }
 
@@ -40,11 +36,21 @@ void OverallPlan::SetSemester(const size_t sem) {
     sem_ = sem;
 }
 
-void OverallPlan::SetSubjects(const std::vector<size_t> &marks) {
-    std::vector<std::string> disciplines = studentSpace::GetDisciplines(sem_);
-    for (size_t i = 0; i < disciplines.size(); ++i) {
-        subjectsStudied_.insert({disciplines[i], marks[i]});
+void OverallPlan::SetSubjects(const std::vector<semester> &subjectsStudied) {
+    subjectsStudied_ = subjectsStudied;
+}
+
+double OverallPlan::Count_average() {
+    double sum = 0;
+    size_t count = subjectsStudied_.size();
+
+    for (auto semester : subjectsStudied_) {
+        for (auto subject : semester.subjects) {
+            sum += subject.second;
+        }
     }
+
+    return sum / count;
 }
 
 OverallPlan::~OverallPlan() = default;

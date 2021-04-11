@@ -5,17 +5,23 @@
 
 #include "student.h"
 
+struct semester {
+    size_t number;
+    std::map<std::string, size_t> subjects;
+};
+
 class OverallPlan : public Student {
 private:
     std::string name_;
     std::string chair_;
     size_t sem_;
-    std::map <std::string, size_t> subjectsStudied_;
+    std::vector<semester> subjectsStudied_;
 
 public:
     OverallPlan();
 
-    OverallPlan(const std::string &name, const std::string &chair, const size_t sem, const std::vector<size_t>& marks);
+    OverallPlan(const std::string &name, const std::string &chair, const size_t sem,
+                const std::vector<semester> &subjectsStudied);
 
     std::string GetName() const;
 
@@ -23,7 +29,7 @@ public:
 
     size_t GetSemester() const;
 
-    std::map <std::string, size_t> GetSubjects() const;
+    std::vector<semester> GetSubjects() const;
 
     void SetName(const std::string &name);
 
@@ -31,7 +37,7 @@ public:
 
     void SetSemester(const size_t sem);
 
-    void SetSubjects(const std::vector<size_t>& marks);
+    void SetSubjects(const std::vector<semester> &subjectsStudied);
 
     double Count_average();
 
