@@ -7,8 +7,9 @@
 #include <fstream>
 #include <iostream>
 
-#include "overall_plan.h"
 #include "individual_plan.h"
+#include "sorting.h"
+#include "overall_plan.h"
 
 namespace fs = std::filesystem;
 
@@ -19,6 +20,13 @@ namespace config {
     const std::string pathToDB = currentPath + separator + DirectoryDB;
 }
 
+struct MainInfo{
+    size_t id;
+    std::string name;
+    std::string chair;
+    size_t sem;
+};
+
 class DBOverallPlan {
 private:
     const std::string Directory_ = "overall_plan";
@@ -27,7 +35,6 @@ private:
     const std::string fileName2_ = "disciplines";
     const std::string fileName3_ = "union";
     std::string nameOpenDB_ = "";
-
 
     size_t getSubjectId(const std::string &subject) {
         const std::string pathToFile2 = path_ + config::separator + nameOpenDB_ + config::separator + fileName2_;
@@ -42,7 +49,7 @@ private:
             size_t sem;
 
             file.read((char *) &id, sizeof(size_t));
-            file.read((char*)&sem, sizeof(size_t));
+            file.read((char *) &sem, sizeof(size_t));
             std::getline(file, name, '\0');
 
             if (name == subject) {
@@ -52,7 +59,6 @@ private:
 
         return id;
     }
-
 
 public:
     DBOverallPlan() {
@@ -161,9 +167,11 @@ public:
                 file.write((char *) &mark, sizeof(size_t));
             }
         }
+
+        file.close();
     }
 
-    void printRecords(){
+    void printRecords() {
         std::fstream file;
         const std::string pathToFile1 = path_ + config::separator + nameOpenDB_ + config::separator + fileName1_;
         const std::string pathToFile2 = path_ + config::separator + nameOpenDB_ + config::separator + fileName2_;
@@ -175,18 +183,18 @@ public:
         std::cout << "id\t name\t chair\t sem\n";
         file.open(pathToFile1, std::ios::binary | std::ios::in);
         size_t len;
-        file.read((char*)&len, sizeof(size_t));
+        file.read((char *) &len, sizeof(size_t));
 
-        for (size_t i = 0; i < len; ++i){
+        for (size_t i = 0; i < len; ++i) {
             size_t id;
             std::string name;
             std::string chair;
             size_t sem;
 
-            file.read((char*)&id, sizeof(size_t));
+            file.read((char *) &id, sizeof(size_t));
             std::getline(file, name, '\0');
             std::getline(file, chair, '\0');
-            file.read((char*)&sem, sizeof(size_t));
+            file.read((char *) &sem, sizeof(size_t));
 
             std::cout << id << '\t' << name << '\t' << chair << '\t' << sem << '\n';
         }
@@ -196,15 +204,15 @@ public:
         file.open(pathToFile2, std::ios::binary | std::ios::in);
         std::cout << "Table Disciplines:\n";
         std::cout << "id\t subject\t sem\n";
-        file.read((char*)&len, sizeof(size_t));
+        file.read((char *) &len, sizeof(size_t));
 
-        for (size_t i = 0; i < len; ++i){
+        for (size_t i = 0; i < len; ++i) {
             size_t id;
             std::string name;
             size_t sem;
 
-            file.read((char*)&id, sizeof(size_t));
-            file.read((char*)&sem, sizeof(size_t));
+            file.read((char *) &id, sizeof(size_t));
+            file.read((char *) &sem, sizeof(size_t));
             std::getline(file, name, '\0');
 
             std::cout << id << '\t' << name << '\t' << sem << '\n';
@@ -216,17 +224,17 @@ public:
         std::cout << "Table Union:\n";
         std::cout << "id(student)\t id(subject)\t mark\n";
 
-        while (true){
+        while (true) {
             size_t id1;
             size_t id2;
             size_t mark;
 
 
-            file.read((char*)&id1, sizeof(size_t));
-            file.read((char*)&id2, sizeof(size_t));
-            file.read((char*)&mark, sizeof(size_t));
+            file.read((char *) &id1, sizeof(size_t));
+            file.read((char *) &id2, sizeof(size_t));
+            file.read((char *) &mark, sizeof(size_t));
 
-            if (file.eof()){
+            if (file.eof()) {
                 break;
             }
 
@@ -236,7 +244,69 @@ public:
         file.close();
     }
 
+    template<class Compare = std::less<>>
+    void sort(Compare cmp = Compare{}) {
+        const std::string pathToFile1 = path_ + config::separator + nameOpenDB_ + config::separator + fileName1_;
+        std::fstream file;
+        std::vector<MainInfo> oldStudents;
+        std::vector<MainInfo> newStudents;
+        size_t len;
 
+        file.open(pathToFile1, std::ios::binary | std::ios::in);
+        file.read((char *) &len, sizeof(size_t));
+        oldStudents.resize(len);
+        newStudents.resize(len);
+
+        for (size_t i = 0; i < len; ++i) {
+            file.read((char *) &oldStudents[i].id, sizeof(size_t));
+            std::getline(file, oldStudents[i].name, '\0');
+            std::getline(file, oldStudents[i].chair, '\0');
+            file.read((char *) &oldStudents[i].sem, sizeof(size_t));
+        }
+
+        file.close();
+
+        merge_sort(oldStudents.begin(), oldStudents.end(), newStudents.begin(), cmp);
+
+        file.open(pathToFile1, std::ios::binary | std::ios::trunc | std::ios::out);
+
+        file.write((char*)&len, sizeof(size_t));
+        for (size_t i = 0; i < len; ++i){
+            file.write((char *) &newStudents[i].id, sizeof(size_t));
+            file << newStudents[i].name << std::ends;
+            file << newStudents[i].chair << std::ends;
+            file.write((char *) &newStudents[i].sem, sizeof(size_t));
+        }
+        file.close();
+    }
+
+    std::vector<OverallPlan> selectBySem(size_t num){
+        const std::string pathToFile1 = path_ + config::separator + nameOpenDB_ + config::separator + fileName1_;
+        const std::string pathToFile2 = path_ + config::separator + nameOpenDB_ + config::separator + fileName2_;
+        const std::string pathToFile3 = path_ + config::separator + nameOpenDB_ + config::separator + fileName3_;
+        std::fstream file;
+        std::map<size_t, OverallPlan> students;
+        size_t len;
+
+        file.open(pathToFile1, std::ios::binary | std::ios::in);
+
+        for (size_t i = 0; i < len; ++i) {
+            size_t id;
+            std::string name;
+            std::string chair;
+            size_t sem;
+
+            file.read((char *) &id, sizeof(size_t));
+            std::getline(file, name, '\0');
+            std::getline(file, chair, '\0');
+            file.read((char *) &sem, sizeof(size_t));
+
+            if (sem == num){
+                students.insert({id, })
+            }
+        }
+
+    }
 
 };
 
