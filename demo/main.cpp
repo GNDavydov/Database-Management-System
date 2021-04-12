@@ -33,4 +33,13 @@ int main() {
         return a.sem < b.sem;
     });
     db.printRecords();
+
+    std::vector<OverallPlan> students = db.selectBySem(2);
+    size_t c = 0;
+    db.createDB("F2", {{1, "math"}, {1, "fisra"}});
+    db.open("F2");
+    db.insert(students[0]);
+    db.insert(students[1]);
+    db.printRecords();
+
 }
