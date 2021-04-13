@@ -1,16 +1,40 @@
 // Copyright 2021 GNDavydov
 
 #include "db_driver.h"
-#include "individual_plan.h"
-#include "overall_plan.h"
+#include "db_overall_plan.h"
+#include "db_individual_plan.h"
 
 int main() {
+    IndividualPlan s1("Grisha", "IU8-21", 2, {{"math", 5}, {"fisra", 4}, {"prog", 5}});
+    IndividualPlan s2("Niko", "IU8-21", 3, {{"math", 5}, {"fisra", 4}, {"prog", 4}});
+    IndividualPlan s3("Roma", "PS-21", 2, {{"math", 4}, {"fisra", 4}, {"prog", 2}});
+    IndividualPlan s4("Nikita", "SM-42", 4, {{"math", 1}, {"fisra", 1}, {"prog", 1}});
+    DBIndividualPlan db;
+    db.createDB("DB1", {"math", "fisra", "prog"});
+    db.open("DB1");
+    db.insert(s1);
+    db.insert(s1);
+    db.insert(s2);
+    db.insert(s3);
+    db.printRecords();
+    db.close();
+    db.open("DB1");
+    db.printRecords();
+    db.insert(s4);
+    db.sort([](IndividualPlan a, IndividualPlan b){
+        return a.GetSemester() < b.GetSemester();
+    });
+
+    db.printRecords();
+    std::vector<IndividualPlan> students = db.selectBySem(2);
+
+     /*
     OverallPlan student1("Niko", "IU8-21", 2, {{1, {{"math", 5}}},
                                                {1, {{"fisra", 3}}}});
     OverallPlan student2("Grigori", "IU8-21", 3, {{1, {{"math", 5}}},
-                                               {1, {{"fisra", 4}}}});
+                                                  {1, {{"fisra", 4}}}});
     OverallPlan student3("Roma", "PS-11", 4, {{1, {{"math", 3}}},
-                                                  {1, {{"fisra", 5}}}});
+                                              {1, {{"fisra", 5}}}});
     DBOverallPlan db;
     db.createDB("FFF", {{"math", 1}, {"fisra", 1}});
 
@@ -21,17 +45,17 @@ int main() {
 
     db.printBD();
     db.printRecords();
-    db.sort([](MainInfo a, MainInfo b){
-        return a.name < b.name;
+    db.sort([](OverallPlan a, OverallPlan b){
+        return a.GetName() < b.GetName();
     });
     db.printRecords();
 
     OverallPlan student4("Nikita", "RC-21", 2, {{1, {{"math", 2}}},
-                                              {1, {{"fisra", 3}}}});
+                                                {1, {{"fisra", 3}}}});
     db.insert(student4);
     db.printRecords();
-    db.sort([](MainInfo a, MainInfo b){
-        return a.sem < b.sem;
+    db.sort([](OverallPlan a, OverallPlan b){
+        return a.GetSemester() < b.GetSemester();
     });
     db.printRecords();
 
@@ -44,5 +68,5 @@ int main() {
     db.printRecords();
     db.open("FFF");
     db.deleteRecord("Grigori");
-    db.printRecords();
+    db.printRecords();*/
 }

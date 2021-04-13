@@ -6,9 +6,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 project(HOMEWORK_1)
 
 add_library(${PROJECT_NAME} STATIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/sources/overall_plan.cpp
-        sources/db_driver.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/
+        sources/overall_plan.cpp
+        sources/db_overall_plan.cpp
         sources/individual_plan.cpp
+        sources/db_individual_plan.cpp
+        sources/db_hybrid.cpp
         )
 
 add_executable(demo

@@ -3,7 +3,9 @@
 #ifndef HOMEWORK_1_SORTING_H
 #define HOMEWORK_1_SORTING_H
 
-template <class It, class Out, class Compare = std::less<>>
+#include <vector>
+
+template<class It, class Out, class Compare = std::less<>>
 Out merge(It first1, It last1, It first2, It last2, Out out,
           Compare cmp = Compare{}) {
     auto next1 = first1;
@@ -36,7 +38,7 @@ Out merge(It first1, It last1, It first2, It last2, Out out,
     return out;
 }
 
-template <class It, class Out, class Compare = std::less<>>
+template<class It, class Out, class Compare = std::less<>>
 Out merge_sort(It first, It last, Out out, Compare cmp = Compare{}) {
     if (last - first > 2) {
         std::vector<typename std::iterator_traits<It>::value_type> buf(last -
