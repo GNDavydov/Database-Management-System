@@ -35,6 +35,7 @@ private:
     const std::string fileName2_ = "disciplines";
     const std::string fileName3_ = "union";
     std::string nameOpenDB_ = "";
+    std::vector<OverallPlan> students_;
 
     size_t getSubjectId(const std::string &subject);
 
@@ -43,7 +44,7 @@ private:
 public:
     DBOverallPlan();
 
-    void createDB(const std::string &name, const std::multimap<size_t, std::string> &disciplines);
+    void createDB(const std::string &name, const std::multimap<std::string, size_t> &disciplines);
 
     void renameDB(const std::string &oldName, const std::string &newName);
 
@@ -52,6 +53,8 @@ public:
     void deleteDB(const std::string &name);
 
     void open(const std::string &name);
+
+    void close();
 
     void insert(const OverallPlan &student);
 

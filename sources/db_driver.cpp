@@ -60,7 +60,7 @@ DBOverallPlan::DBOverallPlan() {
     }
 }
 
-void DBOverallPlan::createDB(const std::string &name, const std::multimap<size_t, std::string> &disciplines) {
+void DBOverallPlan::createDB(const std::string &name, const std::multimap<std::string, size_t> &disciplines) {
     const std::string DBName = path_ + config::separator + name;
     fs::create_directory(DBName);
 
@@ -77,8 +77,8 @@ void DBOverallPlan::createDB(const std::string &name, const std::multimap<size_t
     fileDis.write((char *) &recordsD, sizeof(size_t));
     for (auto subject : disciplines) {
         fileDis.write((char *) &id, sizeof(size_t));
-        fileDis.write((char *) &subject.first, sizeof(size_t));
-        fileDis << subject.second << std::ends;
+        fileDis.write((char *) &subject.second, sizeof(size_t));
+        fileDis << subject.first << std::ends;
         ++id;
     }
     fileDis.close();
@@ -115,6 +115,13 @@ void DBOverallPlan::open(const std::string &name) {
     if (fs::is_directory(path_ + config::separator + name)) {
         nameOpenDB_ = name;
     }
+    students_ = selectAll();
+}
+
+void DBOverallPlan::close(){
+    nameOpenDB_ = "";
+    students_.resize(0);
+    students_.shrink_to_fit();
 }
 
 void DBOverallPlan::insert(const OverallPlan &student) {
@@ -122,6 +129,9 @@ void DBOverallPlan::insert(const OverallPlan &student) {
     const std::string chair = student.GetChair();
     const size_t sem = student.GetSemester();
     const std::vector<semester> subjectsStudied = student.GetSubjects();
+
+    // write in vector
+    students_.push_back(student);
 
     // write in Table Students
     const std::string pathToFile1 = path_ + config::separator + nameOpenDB_ + config::separator + fileName1_;
@@ -308,9 +318,8 @@ std::vector<OverallPlan> DBOverallPlan::selectAll() {
 }
 
 std::vector<OverallPlan> DBOverallPlan::selectBySem(const size_t sem) {
-    const std::vector<OverallPlan> studentsAll = selectAll();
     std::vector<OverallPlan> students;
-    for (auto student : studentsAll) {
+    for (auto student : students_) {
         if (student.GetSemester() == sem) {
             students.push_back(student);
         }
@@ -319,9 +328,8 @@ std::vector<OverallPlan> DBOverallPlan::selectBySem(const size_t sem) {
 }
 
 std::vector<OverallPlan> DBOverallPlan::selectByDis(const std::string &name) {
-    const std::vector<OverallPlan> studentsAll = selectAll();
     std::vector<OverallPlan> students;
-    for (auto student : studentsAll) {
+    for (auto student : students_) {
         std::vector<semester> semesters = student.GetSubjects();
         for (auto semester : semesters) {
             if (semester.subjects.find(name) != semester.subjects.end()) {
@@ -343,10 +351,13 @@ void DBOverallPlan::deleteAllStudents(){
     file.close();
     file.open(pathToFile3, std::ios::binary | std::ios::trunc | std::ios::out);
     file.close();
+
+    students_.resize(0);
+    students_.shrink_to_fit();
 }
 
 void DBOverallPlan::deleteRecord(const std::string &name) {
-    std::vector<OverallPlan> students = selectAll();
+    std::vector<OverallPlan> students = students_;
     deleteAllStudents();
     size_t index = 0;
     while (students[index].GetName() != name && index < students.size()) {

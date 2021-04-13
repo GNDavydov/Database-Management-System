@@ -12,7 +12,7 @@ int main() {
     OverallPlan student3("Roma", "PS-11", 4, {{1, {{"math", 3}}},
                                                   {1, {{"fisra", 5}}}});
     DBOverallPlan db;
-    db.createDB("FFF", {{1, "math"}, {1, "fisra"}});
+    db.createDB("FFF", {{"math", 1}, {"fisra", 1}});
 
     db.open("FFF");
     db.insert(student1);
@@ -37,7 +37,7 @@ int main() {
 
     std::vector<OverallPlan> students = db.selectBySem(2);
     size_t c = 0;
-    db.createDB("F2", {{1, "math"}, {1, "fisra"}});
+    db.createDB("F2", {{"math", 1}, {"fisra", 1}});
     db.open("F2");
     db.insert(students[0]);
     db.insert(students[1]);
