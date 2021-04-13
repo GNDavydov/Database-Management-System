@@ -13,6 +13,7 @@ int main() {
                                                   {1, {{"fisra", 5}}}});
     DBOverallPlan db;
     db.createDB("FFF", {{1, "math"}, {1, "fisra"}});
+
     db.open("FFF");
     db.insert(student1);
     db.insert(student2);
@@ -41,5 +42,7 @@ int main() {
     db.insert(students[0]);
     db.insert(students[1]);
     db.printRecords();
-
+    db.open("FFF");
+    db.deleteRecord("Grigori");
+    db.printRecords();
 }

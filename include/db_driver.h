@@ -63,9 +63,11 @@ public:
 
     std::vector<OverallPlan> selectByDis(const std::string &name);
 
-    void deleteRcord();
+    void deleteAllStudents();
 
-    void editRecords();
+    void deleteRecord(const std::string &name);
+
+    void editRecords(const std::string &name);
 
     template<class Compare = std::less<>>
     void sort(Compare cmp = Compare{}) {

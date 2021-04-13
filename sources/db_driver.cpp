@@ -307,27 +307,57 @@ std::vector<OverallPlan> DBOverallPlan::selectAll() {
     return students;
 }
 
-std::vector<OverallPlan> DBOverallPlan::selectBySem(const size_t sem){
+std::vector<OverallPlan> DBOverallPlan::selectBySem(const size_t sem) {
     const std::vector<OverallPlan> studentsAll = selectAll();
     std::vector<OverallPlan> students;
-    for (auto student : studentsAll){
-        if (student.GetSemester() == sem){
+    for (auto student : studentsAll) {
+        if (student.GetSemester() == sem) {
             students.push_back(student);
         }
     }
     return students;
 }
 
-std::vector<OverallPlan> DBOverallPlan::selectByDis(const std::string &name){
+std::vector<OverallPlan> DBOverallPlan::selectByDis(const std::string &name) {
     const std::vector<OverallPlan> studentsAll = selectAll();
     std::vector<OverallPlan> students;
-    for (auto student : studentsAll){
+    for (auto student : studentsAll) {
         std::vector<semester> semesters = student.GetSubjects();
-        for (auto semester : semesters){
-            if (semester.subjects.find(name) != semester.subjects.end()){
+        for (auto semester : semesters) {
+            if (semester.subjects.find(name) != semester.subjects.end()) {
                 students.push_back(student);
             }
         }
     }
     return students;
+}
+
+void DBOverallPlan::deleteAllStudents(){
+    const std::string pathToFile1 = path_ + config::separator + nameOpenDB_ + config::separator + fileName1_;
+    const std::string pathToFile3 = path_ + config::separator + nameOpenDB_ + config::separator + fileName3_;
+    std::fstream file;
+    size_t len = 0;
+
+    file.open(pathToFile1, std::ios::binary | std::ios::trunc | std::ios::out);
+    file.write((char *) &len, sizeof(size_t));
+    file.close();
+    file.open(pathToFile3, std::ios::binary | std::ios::trunc | std::ios::out);
+    file.close();
+}
+
+void DBOverallPlan::deleteRecord(const std::string &name) {
+    std::vector<OverallPlan> students = selectAll();
+    deleteAllStudents();
+    size_t index = 0;
+    while (students[index].GetName() != name && index < students.size()) {
+        ++index;
+    }
+    students.erase(students.begin() + index);
+    for (size_t i = 0; i < students.size(); ++i){
+        insert(students[i]);
+    }
+}
+
+void DBOverallPlan::editRecords(const std::string &Student) {
+
 }
