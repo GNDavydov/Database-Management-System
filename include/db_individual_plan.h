@@ -61,7 +61,7 @@ public:
 
         deleteAllStudents();
 
-        for (auto student : newStudents){
+        for (auto &student : newStudents){
             insert(student);
         }
     }

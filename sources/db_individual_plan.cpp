@@ -74,7 +74,7 @@ void DBIndividualPlan::createDB(const std::string &name, const std::vector<std::
     size_t id = 1;
 
     fileDis.write((char *) &recordsD, sizeof(size_t));
-    for (auto subject : disciplines) {
+    for (auto &subject : disciplines) {
         fileDis.write((char *) &id, sizeof(size_t));
         fileDis << subject << std::ends;
         ++id;
@@ -156,7 +156,7 @@ void DBIndividualPlan::insert(const IndividualPlan &student) {
     file.close();
 
     file.open(pathToFile3, std::ios::binary | std::ios::app);
-    for (auto subject : subjectsStudied) {
+    for (auto &subject : subjectsStudied) {
         size_t idSubject = getSubjectId(subject.first);
         size_t mark = subject.second;
         file.write((char *) &id, sizeof(size_t));
@@ -168,12 +168,12 @@ void DBIndividualPlan::insert(const IndividualPlan &student) {
 
 void DBIndividualPlan::printRecords() {
     size_t id = 1;
-    for (auto student : students_) {
+    for (auto &student : students_) {
         std::cout << "Student " << id << std::endl;
         std::cout << "Name: " << student.GetName() << std::endl;
         std::cout << "Chair: " << student.GetChair() << std::endl;
         std::cout << "Semester: " << student.GetSemester() << std::endl;
-        for (auto subject : student.GetSubjects()) {
+        for (auto &subject : student.GetSubjects()) {
             std::cout << "Subject name: " << subject.first << " Mark: " << subject.second << std::endl;
         }
         ++id;
@@ -212,7 +212,7 @@ std::vector<IndividualPlan> DBIndividualPlan::selectAll() {
     }
     file.close();
 
-    for (auto student : studentsWithId) {
+    for (auto &student : studentsWithId) {
         file.open(pathToFile3, std::ios::binary | std::ios::in);
         std::map<std::string, size_t> disciplines;
 
@@ -245,7 +245,7 @@ std::vector<IndividualPlan> DBIndividualPlan::selectAll() {
 
 std::vector<IndividualPlan> DBIndividualPlan::selectBySem(const size_t sem) {
     std::vector<IndividualPlan> students;
-    for (auto student : students_) {
+    for (auto &student : students_) {
         if (student.GetSemester() == sem) {
             students.push_back(student);
         }
@@ -253,17 +253,19 @@ std::vector<IndividualPlan> DBIndividualPlan::selectBySem(const size_t sem) {
     return students;
 }
 
-std::vector<IndividualPlan> DBIndividualPlan::selectByDis(const std::string &name){
+std::vector<IndividualPlan> DBIndividualPlan::selectByDis(const std::string &name) {
     std::vector<IndividualPlan> students;
-    for (auto student : students_) {
-        if (student.GetSubjects().find(name) != student.GetSubjects().end()){
-            students.push_back(student);
+    for (auto &student : students_) {
+        for (auto &subject : student.GetSubjects()) {
+            if (subject.first == name) {
+                students.push_back(student);
+            }
         }
     }
     return students;
 }
 
-void DBIndividualPlan::deleteAllStudents(){
+void DBIndividualPlan::deleteAllStudents() {
     const std::string pathToFile1 = path_ + config::separator + nameOpenDB_ + config::separator + fileName1_;
     const std::string pathToFile3 = path_ + config::separator + nameOpenDB_ + config::separator + fileName3_;
     std::fstream file;
@@ -278,7 +280,28 @@ void DBIndividualPlan::deleteAllStudents(){
     students_.resize(0);
     students_.shrink_to_fit();
 }
-/*
-void DBIndividualPlan::deleteRecord(const std::string &name);
 
-void DBIndividualPlan::editRecords(const std::string &name, const IndividualPlan &other);*/
+void DBIndividualPlan::deleteRecord(const std::string &name) {
+    std::vector<IndividualPlan> students = students_;
+    deleteAllStudents();
+    for (auto &student : students) {
+        if (student.GetName() == name) {
+            continue;
+        }
+        insert(student);
+    }
+}
+
+void DBIndividualPlan::editRecords(const std::string &name, const IndividualPlan &other) {
+    std::vector<IndividualPlan> students = students_;
+    deleteAllStudents();
+    for (auto &student : students) {
+        if (student.GetName() == name) {
+            student.SetName(other.GetName());
+            student.SetChair(other.GetChair());
+            student.SetSemester(other.GetSemester());
+            student.SetSubjects(other.GetSubjects());
+        }
+        insert(student);
+    }
+}

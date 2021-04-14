@@ -78,7 +78,7 @@ void DBOverallPlan::createDB(const std::string &name, const std::multimap<std::s
     size_t id = 1;
 
     fileDis.write((char *) &recordsD, sizeof(size_t));
-    for (auto subject : disciplines) {
+    for (auto &subject : disciplines) {
         fileDis.write((char *) &id, sizeof(size_t));
         fileDis.write((char *) &subject.second, sizeof(size_t));
         fileDis << subject.first << std::ends;
@@ -165,8 +165,8 @@ void DBOverallPlan::insert(const OverallPlan &student) {
     const std::string pathToFile3 = path_ + config::separator + nameOpenDB_ + config::separator + fileName3_;
     file.open(pathToFile3, std::ios::binary | std::ios::app);
 
-    for (auto semester : subjectsStudied) {
-        for (auto subject : semester.subjects) {
+    for (auto &semester : subjectsStudied) {
+        for (auto &subject : semester.subjects) {
             size_t idSubject = getSubjectId(subject.first);
             size_t mark = subject.second;
             file.write((char *) &id, sizeof(size_t));
@@ -180,14 +180,14 @@ void DBOverallPlan::insert(const OverallPlan &student) {
 
 void DBOverallPlan::printRecords() {
     size_t id = 1;
-    for (auto student : students_) {
+    for (auto &student : students_) {
         std::cout << "Student " << id << std::endl;
         std::cout << "Name: " << student.GetName() << std::endl;
         std::cout << "Chair: " << student.GetChair() << std::endl;
         std::cout << "Semester: " << student.GetSemester() << std::endl;
         for (auto semester : student.GetSubjects()) {
             std::cout << "Semester of subject: " << semester.number << std::endl;
-            for (auto subject : semester.subjects){
+            for (auto subject : semester.subjects) {
                 std::cout << "Subject: " << subject.first << ", mark: " << subject.second << std::endl;
             }
         }
@@ -229,7 +229,7 @@ std::vector<OverallPlan> DBOverallPlan::selectAll() {
     file.close();
 
     // Supplement the map with an array of estimates and add it to the final vector
-    for (auto student : studentsWithId) {
+    for (auto &student : studentsWithId) {
         file.open(pathToFile3, std::ios::binary | std::ios::in);
         std::map<size_t, size_t> disciplines;
         std::vector<semester> subjectsStudied;
@@ -257,7 +257,7 @@ std::vector<OverallPlan> DBOverallPlan::selectAll() {
             subjectsStudied[i].number = i + 1;
         }
 
-        for (auto discipline : disciplines) {
+        for (auto &discipline : disciplines) {
             std::pair<size_t, std::string> subject = getSubjectName(discipline.first);
             subjectsStudied[subject.first - 1].subjects.insert({subject.second, discipline.second});
         }
@@ -272,7 +272,7 @@ std::vector<OverallPlan> DBOverallPlan::selectAll() {
 
 std::vector<OverallPlan> DBOverallPlan::selectBySem(const size_t sem) {
     std::vector<OverallPlan> students;
-    for (auto student : students_) {
+    for (auto &student : students_) {
         if (student.GetSemester() == sem) {
             students.push_back(student);
         }
@@ -282,9 +282,9 @@ std::vector<OverallPlan> DBOverallPlan::selectBySem(const size_t sem) {
 
 std::vector<OverallPlan> DBOverallPlan::selectByDis(const std::string &name) {
     std::vector<OverallPlan> students;
-    for (auto student : students_) {
+    for (auto &student : students_) {
         std::vector<semester> semesters = student.GetSubjects();
-        for (auto semester : semesters) {
+        for (auto &semester : semesters) {
             if (semester.subjects.find(name) != semester.subjects.end()) {
                 students.push_back(student);
             }
@@ -312,7 +312,7 @@ void DBOverallPlan::deleteAllStudents() {
 void DBOverallPlan::deleteRecord(const std::string &name) {
     std::vector<OverallPlan> students = students_;
     deleteAllStudents();
-    for (auto student : students) {
+    for (auto &student : students) {
         if (student.GetName() == name) {
             continue;
         }
@@ -323,7 +323,7 @@ void DBOverallPlan::deleteRecord(const std::string &name) {
 void DBOverallPlan::editRecords(const std::string &name, const OverallPlan &other) {
     std::vector<OverallPlan> students = students_;
     deleteAllStudents();
-    for (auto student : students) {
+    for (auto &student : students) {
         if (student.GetName() == name) {
             student.SetName(other.GetName());
             student.SetChair(other.GetChair());

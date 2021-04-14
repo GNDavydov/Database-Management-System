@@ -8,7 +8,7 @@ int main() {
     IndividualPlan s1("Grisha", "IU8-21", 2, {{"math", 5}, {"fisra", 4}, {"prog", 5}});
     IndividualPlan s2("Niko", "IU8-21", 3, {{"math", 5}, {"fisra", 4}, {"prog", 4}});
     IndividualPlan s3("Roma", "PS-21", 2, {{"math", 4}, {"fisra", 4}, {"prog", 2}});
-    IndividualPlan s4("Nikita", "SM-42", 4, {{"math", 1}, {"fisra", 1}, {"prog", 1}});
+    IndividualPlan s4("Nikita", "SM-42", 4, {{"math", 1}, {"fisra", 1}});
     DBIndividualPlan db;
     db.createDB("DB1", {"math", "fisra", "prog"});
     db.open("DB1");
@@ -26,7 +26,29 @@ int main() {
     });
 
     db.printRecords();
-    std::vector<IndividualPlan> students = db.selectBySem(2);
+    std::vector<IndividualPlan> students = db.selectByDis("prog");
+    db.close();
+    db.createDB("DB2", {"math", "fisra", "prog"});
+    db.open("DB2");
+    for (auto s : students){
+        db.insert(s);
+    }
+    db.printRecords();
+    db.close();
+    db.open("DB2");
+    db.printRecords();
+    db.deleteRecord("Grisha");
+    db.printRecords();
+    db.close();
+    db.open("DB2");
+    db.printRecords();
+    IndividualPlan s2_1("Niko", "IU8-31", 3, {{"math", 5}, {"fisra", 4}, {"prog", 5}});
+    db.editRecords("Niko", s2_1);
+    db.printRecords();
+    db.close();
+    db.open("DB2");
+    db.printRecords();
+
 
      /*
     OverallPlan student1("Niko", "IU8-21", 2, {{1, {{"math", 5}}},
