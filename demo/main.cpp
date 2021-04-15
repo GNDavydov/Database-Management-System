@@ -48,6 +48,10 @@ int main() {
     db.close();
     db.open("DB2");
     db.printRecords();
+    db.printBD();
+    db.renameDB("DB1", "DB1_2");
+    db.deleteDB("DB1_2");
+    db.printBD();
 
 
      /*

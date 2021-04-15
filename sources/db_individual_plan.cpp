@@ -105,8 +105,10 @@ void DBIndividualPlan::printBD() {
 }
 
 void DBIndividualPlan::deleteDB(const std::string &name) {
-    const std::string DBName = path_ + config::separator + name;
-    fs::remove_all(DBName);
+    if (nameOpenDB_ != name){
+        const std::string DBName = path_ + config::separator + name;
+        fs::remove_all(DBName);
+    }
 }
 
 void DBIndividualPlan::open(const std::string &name) {

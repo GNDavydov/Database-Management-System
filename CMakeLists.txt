@@ -7,6 +7,7 @@ project(HOMEWORK_1)
 
 add_library(${PROJECT_NAME} STATIC
         ${CMAKE_CURRENT_SOURCE_DIR}/
+        sources/db_driver.cpp
         sources/overall_plan.cpp
         sources/db_overall_plan.cpp
         sources/individual_plan.cpp
