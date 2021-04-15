@@ -7,14 +7,8 @@
 #include "individual_plan.h"
 #include "sorting.h"
 
-class DBIndividualPlan {
+class DBIndividualPlan : public DB{
 private:
-    const std::string Directory_ = "individual_plan";
-    const std::string path_ = config::pathToDB + config::separator + Directory_;
-    const std::string fileName1_ = "students";
-    const std::string fileName2_ = "disciplines";
-    const std::string fileName3_ = "union";
-    std::string nameOpenDB_ = "";
     std::vector<IndividualPlan> students_;
 
     size_t getSubjectId(const std::string &subject);
@@ -25,12 +19,6 @@ public:
     DBIndividualPlan();
 
     void createDB(const std::string &name, const std::vector<std::string> &disciplines);
-
-    void renameDB(const std::string &oldName, const std::string &newName);
-
-    void printBD();
-
-    void deleteDB(const std::string &name);
 
     void open(const std::string &name);
 

@@ -6,14 +6,8 @@
 #include "db_driver.h"
 #include "overall_plan.h"
 
-class DBOverallPlan {
+class DBOverallPlan : public DB{
 private:
-    const std::string Directory_ = "overall_plan";
-    const std::string path_ = config::pathToDB + config::separator + Directory_;
-    const std::string fileName1_ = "students";
-    const std::string fileName2_ = "disciplines";
-    const std::string fileName3_ = "union";
-    std::string nameOpenDB_ = "";
     std::vector<OverallPlan> students_;
 
     size_t getSubjectId(const std::string &subject);
@@ -24,12 +18,6 @@ public:
     DBOverallPlan();
 
     void createDB(const std::string &name, const std::multimap<std::string, size_t> &disciplines);
-
-    void renameDB(const std::string &oldName, const std::string &newName);
-
-    void printBD();
-
-    void deleteDB(const std::string &name);
 
     void open(const std::string &name);
 

@@ -5,7 +5,7 @@
 #include "db_individual_plan.h"
 
 int main() {
-    IndividualPlan s1("Grisha", "IU8-21", 2, {{"math", 5}, {"fisra", 4}, {"prog", 5}});
+    /*IndividualPlan s1("Grisha", "IU8-21", 2, {{"math", 5}, {"fisra", 4}, {"prog", 5}});
     IndividualPlan s2("Niko", "IU8-21", 3, {{"math", 5}, {"fisra", 4}, {"prog", 4}});
     IndividualPlan s3("Roma", "PS-21", 2, {{"math", 4}, {"fisra", 4}, {"prog", 2}});
     IndividualPlan s4("Nikita", "SM-42", 4, {{"math", 1}, {"fisra", 1}});
@@ -53,8 +53,14 @@ int main() {
     db.deleteDB("DB1_2");
     db.printBD();
 
+    db.deleteDB("DB!");
+    db.createDB("DB1!", {"math", "fisra", "prog"});
+    db.printBD();
+    db.deleteDB("DB1");
+    db.renameDB("DB1!", "DB!");*/
 
-     /*
+
+/*
     OverallPlan student1("Niko", "IU8-21", 2, {{1, {{"math", 5}}},
                                                {1, {{"fisra", 3}}}});
     OverallPlan student2("Grigori", "IU8-21", 3, {{1, {{"math", 5}}},
@@ -94,5 +100,10 @@ int main() {
     db.printRecords();
     db.open("FFF");
     db.deleteRecord("Grigori");
-    db.printRecords();*/
+    db.printRecords();
+    db.printBD();
+    db.renameDB("FFF", "DB!");
+    db.printBD();
+    db.deleteDB("DB!");
+    */
 }

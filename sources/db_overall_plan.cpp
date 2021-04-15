@@ -54,15 +54,7 @@ std::pair<size_t, std::string> DBOverallPlan::getSubjectName(const size_t id) {
     return std::pair(sem, name);
 }
 
-DBOverallPlan::DBOverallPlan() {
-    try {
-        fs::create_directory(path_);
-    }
-    catch (fs::filesystem_error) {
-        fs::create_directory(config::currentPath + config::separator + config::DirectoryDB);
-        fs::create_directory(path_);
-    }
-}
+DBOverallPlan::DBOverallPlan() : DB("overall_plan") {}
 
 void DBOverallPlan::createDB(const std::string &name, const std::multimap<std::string, size_t> &disciplines) {
     const std::string DBName = path_ + config::separator + name;
@@ -87,33 +79,6 @@ void DBOverallPlan::createDB(const std::string &name, const std::multimap<std::s
     fileDis.close();
 
     std::ofstream(DBName + config::separator + fileName3_, std::ios::binary);
-}
-
-void DBOverallPlan::renameDB(const std::string &oldName, const std::string &newName) {
-    const fs::path oldPath = path_ + config::separator + oldName;
-    const fs::path newPath = path_ + config::separator + newName;
-
-    try {
-        fs::rename(oldPath, newPath);
-    }
-    catch (fs::filesystem_error &e) {
-        std::cout << e.what() << std::endl;
-    }
-}
-
-void DBOverallPlan::printBD() {
-    for (auto &temp: fs::recursive_directory_iterator(path_)) {
-        if (temp.is_directory()) {
-            std::cout << temp.path() << std::endl;
-        }
-    }
-}
-
-void DBOverallPlan::deleteDB(const std::string &name) {
-    if (nameOpenDB_ != name){
-        const std::string DBName = path_ + config::separator + name;
-        fs::remove_all(DBName);
-    }
 }
 
 void DBOverallPlan::open(const std::string &name) {

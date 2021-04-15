@@ -18,5 +18,28 @@ namespace config {
     const std::string pathToDB = currentPath + separator + DirectoryDB;
 }
 
+class DB {
+protected:
+    const std::string Directory_;
+    const std::string path_ = config::pathToDB + config::separator + Directory_;
+    const std::string fileName1_ = "students";
+    const std::string fileName2_ = "disciplines";
+    const std::string fileName3_ = "union";
+    std::string nameOpenDB_ = "";
+
+public:
+    DB(const std::string &Directory);
+
+    void renameDB(const std::string &oldName, const std::string &newName);
+
+    void printBD();
+
+    void deleteDB(const std::string &name);
+
+    virtual void open(const std::string &name) = 0;
+
+    virtual  void close() = 0;
+};
+
 
 #endif //SEM_2_ALG_LANG_HOMEWORK_1_DB_DRIVER_H
