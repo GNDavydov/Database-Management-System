@@ -56,6 +56,8 @@ std::pair<size_t, std::string> DBOverallPlan::getSubjectName(const size_t id) {
 
 DBOverallPlan::DBOverallPlan() : DB("overall_plan") {}
 
+DBOverallPlan::DBOverallPlan(const std::string &path) : DB(path, "overall_plan") {}
+
 void DBOverallPlan::createDB(const std::string &name, const std::multimap<std::string, size_t> &disciplines) {
     const std::string DBName = path_ + config::separator + name;
     fs::create_directory(DBName);

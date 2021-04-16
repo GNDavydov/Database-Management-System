@@ -18,6 +18,8 @@ private:
 public:
     DBIndividualPlan();
 
+    DBIndividualPlan(const std::string &path);
+
     void createDB(const std::string &name, const std::vector<std::string> &disciplines);
 
     void open(const std::string &name);

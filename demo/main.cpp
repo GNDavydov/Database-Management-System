@@ -3,8 +3,94 @@
 #include "db_driver.h"
 #include "db_overall_plan.h"
 #include "db_individual_plan.h"
+#include "db_hybrid.h"
 
 int main() {
+
+    DBHybrid db;
+    db.createDB("FFF", {{"math", 1}, {"fisra", 1}, {"prog", 5}});
+    db.open("FFF");
+
+    IndividualPlan s1("Grisha", "IU8-21", 2, {{"math", 5}, {"fisra", 4}, {"prog", 5}});
+    IndividualPlan s2("Niko", "IU8-21", 3, {{"math", 5}, {"fisra", 4}, {"prog", 4}});
+    IndividualPlan s3("Roma", "PS-21", 2, {{"math", 4}, {"fisra", 4}, {"prog", 2}});
+    IndividualPlan s4("Nikita", "SM-42", 4, {{"math", 1}, {"fisra", 1}});
+
+    OverallPlan student1("Niko", "IU8-21", 2, {{1, {{"math", 5}}},
+                                               {1, {{"fisra", 3}}}});
+    OverallPlan student2("Grigori", "IU8-21", 3, {{1, {{"math", 5}}},
+                                                  {1, {{"fisra", 4}}}});
+    OverallPlan student3("Roma", "PS-11", 4, {{1, {{"math", 3}}},
+                                              {1, {{"fisra", 5}}}});
+
+
+    db.insertIndividual(s1);
+    db.insertIndividual(s2);
+    db.printRecords();
+
+    db.close();
+    db.open("FFF");
+    db.printRecords();
+
+    db.insertOverall(student1);
+    db.insertOverall(student2);
+
+    db.printRecords();
+
+    db.close();
+    db.open("FFF");
+    db.printRecords();
+
+    std::pair<std::vector<OverallPlan>, std::vector<IndividualPlan>> students = db.selectBySem(2);
+    db.deleteRecord("Niko");
+    db.close();
+    db.open("FFF");
+    db.printRecords();;
+    db.editIndividual("Grisha", s3);
+    db.close();
+    db.open("FFF");
+    db.printRecords();;
+    db.editOverall("Grigori", student3);
+    db.close();
+    db.open("FFF");
+    db.printRecords();;
+
+
+
+
+    db.close();
+    db.createDB("DB1", {{"math", 1}, {"fisra", 1}, {"prog", 5}});
+
+    db.open("DB1");
+    db.insertIndividual(s1);
+    db.insertIndividual(s2);
+    db.insertIndividual(s3);
+    db.insertIndividual(s4);
+    db.insertIndividual(s4);
+
+    db.insertOverall(student1);
+    db.insertOverall(student2);
+    db.insertOverall(student3);
+    db.insertOverall(student2);
+
+    db.close();
+    db.open("DB1");
+    db.printRecords();;
+
+    db.sortIndividual([](IndividualPlan a, IndividualPlan b){
+        return a.GetSemester() < b.GetSemester();
+    });
+
+    db.sortOverall([](OverallPlan a, OverallPlan b){
+        return a.GetSemester() < b.GetSemester();
+    });
+
+    db.close();
+    db.open("DB1");
+    db.printRecords();;
+
+    int x = 0;
+
     /*IndividualPlan s1("Grisha", "IU8-21", 2, {{"math", 5}, {"fisra", 4}, {"prog", 5}});
     IndividualPlan s2("Niko", "IU8-21", 3, {{"math", 5}, {"fisra", 4}, {"prog", 4}});
     IndividualPlan s3("Roma", "PS-21", 2, {{"math", 4}, {"fisra", 4}, {"prog", 2}});

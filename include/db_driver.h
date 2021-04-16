@@ -30,6 +30,8 @@ protected:
 public:
     DB(const std::string &Directory);
 
+    DB(const std::string &path, const std::string &Directory);
+
     void renameDB(const std::string &oldName, const std::string &newName);
 
     void printBD();

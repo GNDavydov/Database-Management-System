@@ -2,13 +2,29 @@
 
 #include "db_driver.h"
 
-DB::DB(const std::string &Directory) : Directory_(Directory){
+DB::DB(const std::string &Directory) : Directory_(Directory) {
     try {
         fs::create_directory(path_);
     }
     catch (fs::filesystem_error) {
         fs::create_directory(config::currentPath + config::separator + config::DirectoryDB);
         fs::create_directory(path_);
+    }
+}
+
+DB::DB(const std::string &path, const std::string &Directory) : Directory_(path + config::separator + Directory) {
+    try {
+        fs::create_directory(path_);
+    }
+    catch (fs::filesystem_error) {
+        try {
+            fs::create_directory(config::DirectoryDB + config::separator + path);
+            fs::create_directory(path_);
+        } catch (fs::filesystem_error) {
+            fs::create_directory(config::currentPath + config::separator + config::DirectoryDB);
+            fs::create_directory(config::DirectoryDB + config::separator + path);
+            fs::create_directory(path_);
+        }
     }
 }
 
@@ -33,7 +49,7 @@ void DB::printBD() {
 }
 
 void DB::deleteDB(const std::string &name) {
-    if (nameOpenDB_ != name){
+    if (nameOpenDB_ != name) {
         close();
     }
 

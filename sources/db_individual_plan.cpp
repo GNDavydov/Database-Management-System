@@ -52,6 +52,8 @@ std::string DBIndividualPlan::getSubjectName(const size_t id) {
 
 DBIndividualPlan::DBIndividualPlan() : DB("individual_plan") {}
 
+DBIndividualPlan::DBIndividualPlan(const std::string &path) : DB(path, "individual_plan") {}
+
 void DBIndividualPlan::createDB(const std::string &name, const std::vector<std::string> &disciplines) {
     const std::string DBName = path_ + config::separator + name;
     fs::create_directory(DBName);

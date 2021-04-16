@@ -17,6 +17,8 @@ private:
 public:
     DBOverallPlan();
 
+    DBOverallPlan(const std::string &path);
+
     void createDB(const std::string &name, const std::multimap<std::string, size_t> &disciplines);
 
     void open(const std::string &name);
