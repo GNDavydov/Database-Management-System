@@ -4,9 +4,25 @@
 #include "db_overall_plan.h"
 #include "db_individual_plan.h"
 #include "db_hybrid.h"
+#include "interpreter.h"
 
 int main() {
+    /*
+    IndividualPlan s1("Grisha", "IU8-21", 2, {{"mathematics", 5}, {"history", 4}, {"informatics", 5},
+                                              {"programming 1", 5}})
+    IndividualPlan s2("Niko", "IU8-21", 3, {{"mathematics", 3}, {"history", 3}, {"informatics", 5},
+                                              {"programming 1", 5}});
+                                              ;*/
+    //DBIndividualPlan db;
+    //db.createDB("db1", studentSpace::disciplines);
+    //db.open("DB1");
+    //db.insert(s1);
+    //db.printRecords();
+    //db.close();
+    help();
 
+    interpreter();
+    /*
     DBHybrid db;
     db.createDB("FFF", {{"math", 1}, {"fisra", 1}, {"prog", 5}});
     db.open("FFF");
@@ -90,6 +106,7 @@ int main() {
     db.printRecords();;
 
     int x = 0;
+*/
 
     /*IndividualPlan s1("Grisha", "IU8-21", 2, {{"math", 5}, {"fisra", 4}, {"prog", 5}});
     IndividualPlan s2("Niko", "IU8-21", 3, {{"math", 5}, {"fisra", 4}, {"prog", 4}});
@@ -145,8 +162,7 @@ int main() {
     db.deleteDB("DB1");
     db.renameDB("DB1!", "DB!");*/
 
-
-/*
+    /*
     OverallPlan student1("Niko", "IU8-21", 2, {{1, {{"math", 5}}},
                                                {1, {{"fisra", 3}}}});
     OverallPlan student2("Grigori", "IU8-21", 3, {{1, {{"math", 5}}},
