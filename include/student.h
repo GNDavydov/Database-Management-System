@@ -21,6 +21,7 @@ namespace studentSpace {
             {"physical culture 2", 2},
             {"programming 2", 2},
             {"physics 2", 2},
+            {"grafics", 2},
             {"physics 3", 3},
             {"programming 3", 3},
             {"physical culture 3", 3},

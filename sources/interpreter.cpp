@@ -15,11 +15,11 @@ void help() {
     std::cout << "----Открытие БД - OPEN <TYPE DB> <NAME>---------------------------------------------" << '\n';
     std::cout << "----Закрытие БД - CLOSE ------------------------------------------------------------" << '\n';
     std::cout << "----Добавление записи в БД - INSERT <VARIABLE> (for Hybrid)-------------------------" << '\n';
-    std::cout << "----Редактирование записи в БД - UPDATE_SET <VARIABLE> WHERE <NAME>-----------------" << '\n';
+    std::cout << "----Редактирование записи в БД - UPDATE <VARIABLE> (for Hybrid) WHERE <NAME>----" << '\n';
     std::cout << "----Удаление записи в БД - DELETE_WHERE <NAME>--------------------------------------" << '\n';
     std::cout << "----Вывод на экран записей БД - PRINT_RECORDS --------------------------------------" << '\n';
     std::cout << "----Сортировка записей БД - SORT <PARAM> <COMPARISON>-------------------------------" << '\n';
-    std::cout << "----Сохранение выборки как новый БД - SELECT_AND_SAVE <PARAM> in <NEW NAME>---------" << '\n';
+    std::cout << "----Сохранение выборки как новый БД - SELECT_AND_SAVE <PARAM> IN <NEW NAME>---------" << '\n';
     std::cout << "----Завершение работы - QUIT--------------------------------------------------------" << '\n';
     std::cout << "------------------------------------------------------------------------------------" << '\n';
     std::cout << "----Доступные параметры:------------------------------------------------------------" << '\n';
@@ -250,9 +250,27 @@ void interpreter() {
                 }
             }
 
-            else if (wordsVector.at(0)  == "UPDATE_SET"){
+            else if (wordsVector.at(0)  == "UPDATE") {
+                if (openDB == "Individual" || openDB == "Hybrid" && wordsVector.at(1) == "Individual") {
+                    if (openDB == "Individual") {
+                        dbIndividualPlan.editRecords(wordsVector.at(2), getIndividual());
+                    } else {
+                        dbHybrid.editIndividual(wordsVector.at(3), getIndividual());
+                    }
 
+                }
+                else if (openDB == "Overall" || openDB == "Hybrid" && wordsVector.at(1) == "Overall") {
+                    if (openDB == "Overall") {
+                        dbOverallPlan.editRecords(wordsVector.at(2), getOverall());
+                    } else {
+                        dbHybrid.editOverall(wordsVector.at(3), getOverall());
+                    }
+                }
+                else {
+                    std::cout << "Неверный ввод команды попробуйте еще раз" << '\n';
+                }
             }
+
             else if (wordsVector.at(0)  == "DELETE_WHERE"){
                 if (openDB == "Individual") {
                     dbIndividualPlan.deleteRecord(wordsVector.at(1));
