@@ -7,6 +7,7 @@ void help() {
     std::cout.fixed;
     std::cout << "------------------------------------------------------------------------------------" << '\n';
     std::cout << "----Доступные функции:--------------------------------------------------------------" << '\n';
+    std::cout << "----Печать доступных предметов - PRINT_DIS------------------------------------------" << '\n';
     std::cout << "----Создание БД - CREATE_DB <TYPE DB> <NAME DB>-------------------------------------" << '\n';
     std::cout << "----Вывод на экран списка БД - PRINT_DB <TYPE DB>-----------------------------------" << '\n';
     std::cout << "----Удаление БД - DELETE_DB <TYPE DB> <NAME>----------------------------------------" << '\n';
@@ -18,8 +19,7 @@ void help() {
     std::cout << "----Удаление записи в БД - DELETE_WHERE <NAME>--------------------------------------" << '\n';
     std::cout << "----Вывод на экран записей БД - PRINT_RECORDS --------------------------------------" << '\n';
     std::cout << "----Сортировка записей БД - SORT <PARAM> <COMPARISON>-------------------------------" << '\n';
-    std::cout << "----Выборка записей - SELECT <TYPE DB> WHERE <PARAM>--------------------------------" << '\n';
-    std::cout << "----Сохранение выборки как новый БД - SELECT_AND_SAVE WHERE <PARAM> in <NEW NAME>---" << '\n';
+    std::cout << "----Сохранение выборки как новый БД - SELECT_AND_SAVE <PARAM> in <NEW NAME>---------" << '\n';
     std::cout << "----Завершение работы - QUIT--------------------------------------------------------" << '\n';
     std::cout << "------------------------------------------------------------------------------------" << '\n';
     std::cout << "----Доступные параметры:------------------------------------------------------------" << '\n';
@@ -130,7 +130,13 @@ void interpreter() {
         getWords(command, wordsVector);
 
         try{
-            if (wordsVector.at(0) == "CREATE_DB"){
+            if (wordsVector.at(0) == "PRINT_DIS"){
+                for (auto &semester : studentSpace::disciplinesAll){
+                    std::cout << "Семестер: " << semester.second << " название: " << semester.first << '\n';
+                }
+            }
+
+            else if (wordsVector.at(0) == "CREATE_DB"){
                 if (wordsVector.at(1) == "Individual"){
                     dbIndividualPlan.createDB(wordsVector.at(2) , studentSpace::disciplines);
                 }
@@ -355,23 +361,118 @@ void interpreter() {
                 }
             }
 
-            else if (wordsVector.at(0)  == "SELECT"){
-
-            }
             else if (wordsVector.at(0)  == "SELECT_AND_SAVE"){
                 if (openDB == "Individual") {
-                    dbIndividualPlan.deleteRecord(wordsVector.at(1));
+                    if (wordsVector.at(1) == "SEMESTER") {
+                        size_t num;
+                        std::vector<IndividualPlan> students;
+
+                        std::cout << "Введите номер семестра,по которому хотите совершить выборку\n";
+                        std::cin >> num;
+                        std::cin.ignore();
+                        students = dbIndividualPlan.selectBySem(num);
+
+                        dbIndividualPlan.createDB(wordsVector.at(3), studentSpace::disciplines);
+                        dbIndividualPlan.open(wordsVector.at(3));
+
+                        for (auto &student : students){
+                            dbIndividualPlan.insert(student);
+                        }
+                    }
+                    else if (wordsVector.at(1) == "DISCIPLINE") {
+                        std::string name;
+                        std::vector<IndividualPlan> students;
+
+                        std::cout << "Введите название дисциплины, по которой осуществляется выборка\n";
+                        std::getline(std::cin, name, '\n');
+                        students = dbIndividualPlan.selectByDis(name);
+
+                        dbIndividualPlan.createDB(wordsVector.at(3), studentSpace::disciplines);
+                        dbIndividualPlan.open(wordsVector.at(3));
+
+                        for (auto &student : students){
+                            dbIndividualPlan.insert(student);
+                        }
+                    }
                 }
                 else if (openDB == "Overall"){
-                    dbOverallPlan.deleteRecord(wordsVector.at(1));
+                    if (wordsVector.at(1) == "SEMESTER") {
+                        size_t num;
+                        std::vector<OverallPlan> students;
+
+                        std::cout << "Введите номер семестра,по которому хотите совершить выборку\n";
+                        std::cin >> num;
+                        std::cin.ignore();
+                        students = dbOverallPlan.selectBySem(num);
+
+                        dbOverallPlan.createDB(wordsVector.at(3), studentSpace::disciplinesAll);
+                        dbOverallPlan.open(wordsVector.at(3));
+
+                        for (auto &student : students){
+                            dbOverallPlan.insert(student);
+                        }
+                    }
+                    else if (wordsVector.at(1) == "DISCIPLINE") {
+                        std::string name;
+                        std::vector<OverallPlan> students;
+
+                        std::cout << "Введите название дисциплины, по которой осуществляется выборка\n";
+                        std::getline(std::cin, name, '\n');
+                        students = dbOverallPlan.selectByDis(name);
+
+                        dbOverallPlan.createDB(wordsVector.at(3), studentSpace::disciplinesAll);
+                        dbOverallPlan.open(wordsVector.at(3));
+
+                        for (auto &student : students){
+                            dbOverallPlan.insert(student);
+                        }
+                    }
                 }
                 else if (openDB == "Hybrid"){
-                    dbHybrid.deleteRecord(wordsVector.at(1));
+                    if (wordsVector.at(1) == "SEMESTER") {
+                        size_t num;
+                        std::pair<std::vector<OverallPlan>, std::vector<IndividualPlan>> students;
+
+                        std::cout << "Введите номер семестра,по которому хотите совершить выборку\n";
+                        std::cin >> num;
+                        std::cin.ignore();
+                        students = dbHybrid.selectBySem(num);
+
+                        dbHybrid.createDB(wordsVector.at(3), studentSpace::disciplinesAll);
+                        dbHybrid.open(wordsVector.at(3));
+
+                        for (auto &student : students.first){
+                            dbHybrid.insertOverall(student);
+                        }
+                        for (auto &student : students.second){
+                            dbHybrid.insertIndividual(student);
+                        }
+                    }
+                    else if (wordsVector.at(1) == "DISCIPLINE") {
+                        std::string name;
+                        std::pair<std::vector<OverallPlan>, std::vector<IndividualPlan>> students;
+
+                        std::cout << "Введите название дисциплины, по которой осуществляется выборка\n";
+                        std::getline(std::cin, name, '\n');
+                        students = dbHybrid.selectByDis(name);
+
+                        dbHybrid.createDB(wordsVector.at(3), studentSpace::disciplinesAll);
+                        dbHybrid.open(wordsVector.at(3));
+
+                        for (auto &student : students.first){
+                            dbHybrid.insertOverall(student);
+                        }
+                        for (auto &student : students.second){
+                            dbHybrid.insertIndividual(student);
+                        }
+                    }
                 }
             }
+
             else if (wordsVector.at(0)  == "QUIT"){
                 break;
             }
+
             else{
                 std::cout << "Неверный ввод команды попробуйте еще раз" << '\n';
             }
