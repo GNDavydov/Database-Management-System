@@ -46,7 +46,7 @@ double IndividualPlan::Count_average() {
     double sum = 0;
     size_t count = subjectsStudied_.size();
 
-    for (auto iter : subjectsStudied_) {
+    for (auto &iter : subjectsStudied_) {
         sum += iter.second;
     }
 

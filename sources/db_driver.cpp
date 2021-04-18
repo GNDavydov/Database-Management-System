@@ -43,7 +43,9 @@ void DB::renameDB(const std::string &oldName, const std::string &newName) {
 void DB::printBD() {
     for (auto &temp: fs::recursive_directory_iterator(path_)) {
         if (temp.is_directory()) {
-            std::cout << temp.path() << std::endl;
+            const size_t i = std::string(temp.path()).find_last_of('/');
+            const std::string name = std::string(temp.path()).substr(i);
+            std::cout << name << std::endl;
         }
     }
 }

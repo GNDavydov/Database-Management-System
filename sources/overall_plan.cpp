@@ -42,12 +42,11 @@ void OverallPlan::SetSubjects(const std::vector<semester> &subjectsStudied) {
 
 double OverallPlan::Count_average() {
     double sum = 0;
-    size_t count = subjectsStudied_.size();
+    size_t count = 0;
 
-    for (auto semester : subjectsStudied_) {
-        for (auto subject : semester.subjects) {
-            sum += subject.second;
-        }
+    for (auto &subject : subjectsStudied_.back().subjects){
+        sum += subject.second;
+        ++count;
     }
 
     return sum / count;
